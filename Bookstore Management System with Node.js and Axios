@@ -1,0 +1,195 @@
+mkdir bookshop
+cd bookshop
+npm init -y
+npm install axios
+const axios = require('axios');
+
+const API_URL = 'https://api.example.com'; // Replace with actual API URL
+
+// Task 10: Get all books – Using async callback function
+async function getAllBooks(callback) {
+    try {
+        const response = await axios.get(`${API_URL}/books`);
+        callback(null, response.data);
+    } catch (error) {
+        callback(error);
+    }
+}
+
+// Task 11: Search by ISBN – Using Promises
+function getBookByISBN(isbn) {
+    return axios.get(`${API_URL}/books/isbn/${isbn}`)
+        .then(response => response.data)
+        .catch(error => { throw error; });
+}
+
+// Task 12: Search by Author
+async function getBooksByAuthor(author) {
+    try {
+        const response = await axios.get(`${API_URL}/books/author/${author}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Task 13: Search by Title
+async function getBooksByTitle(title) {
+    try {
+        const response = await axios.get(`${API_URL}/books/title/${title}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Example usage of the functions
+async function main() {
+    // Using the async callback function to get all books
+    getAllBooks((error, books) => {
+        if (error) {
+            console.error('Error fetching books:', error);
+        } else {
+            console.log('All Books:', books);
+        }
+    });
+
+    // Using Promises to get a book by ISBN
+    getBookByISBN('1234567890')
+        .then(book => console.log('Book with ISBN:', book))
+        .catch(error => console.error('Error fetching book by ISBN:', error));
+
+    // Using async/await to get books by author
+    try {
+        const booksByAuthor = await getBooksByAuthor('J.K. Rowling');
+        console.log('Books by Author:', booksByAuthor);
+    } catch (error) {
+        console.error('Error fetching books by author:', error);
+    }
+
+    // Using async/await to get books by title
+    try {
+        const booksByTitle = await getBooksByTitle('Harry Potter');
+        console.log('Books by Title:', booksByTitle);
+    } catch (error) {
+        console.error('Error fetching books by title:', error);
+    }
+}
+
+main();
+// Task 6: Register New user
+async function registerUser(userData) {
+    try {
+        const response = await axios.post(`${API_URL}/users/register`, userData);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Task 7: Login as a Registered user
+async function loginUser(credentials) {
+    try {
+        const response = await axios.post(`${API_URL}/users/login`, credentials);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+// Task 8: Add/Modify a book review
+async function addOrModifyReview(bookId, review, token) {
+    try {
+        const response = await axios.post(
+            `${API_URL}/books/${bookId}/review`,
+            review,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+
+// Task 9: Delete book review added by that particular user
+async function deleteReview(bookId, reviewId, token) {
+    try {
+        const response = await axios.delete(
+            `${API_URL}/books/${bookId}/review/${reviewId}`,
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+}
+async function main() {
+    // Test getAllBooks
+    getAllBooks((error, books) => {
+        if (error) {
+            console.error('Error fetching books:', error);
+        } else {
+            console.log('All Books:', books);
+        }
+    });
+
+    // Test getBookByISBN
+    try {
+        const book = await getBookByISBN('1234567890');
+        console.log('Book with ISBN:', book);
+    } catch (error) {
+        console.error('Error fetching book by ISBN:', error);
+    }
+
+    // Test getBooksByAuthor
+    try {
+        const booksByAuthor = await getBooksByAuthor('J.K. Rowling');
+        console.log('Books by Author:', booksByAuthor);
+    } catch (error) {
+        console.error('Error fetching books by author:', error);
+    }
+
+    // Test getBooksByTitle
+    try {
+        const booksByTitle = await getBooksByTitle('Harry Potter');
+        console.log('Books by Title:', booksByTitle);
+    } catch (error) {
+        console.error('Error fetching books by title:', error);
+    }
+
+    // Test user registration
+    try {
+        const newUser = await registerUser({ username: 'testuser', password: 'password123' });
+        console.log('Registered User:', newUser);
+    } catch (error) {
+        console.error('Error registering user:', error);
+    }
+
+    // Test user login
+    try {
+        const user = await loginUser({ username: 'testuser', password: 'password123' });
+        console.log('Logged in User:', user);
+    } catch (error) {
+        console.error('Error logging in user:', error);
+    }
+
+    // Assume we have a valid token after login for adding/modifying/deleting reviews
+    const token = 'valid-jwt-token';
+
+    // Test add or modify review
+    try {
+        const review = await addOrModifyReview('bookId123', { rating: 5, comment: 'Great book!' }, token);
+        console.log('Added/Modified Review:', review);
+    } catch (error) {
+        console.error('Error adding/modifying review:', error);
+    }
+
+    // Test delete review
+    try {
+        const deleteResponse = await deleteReview('bookId123', 'reviewId456', token);
+        console.log('Deleted Review:', deleteResponse);
+    } catch (error) {
+        console.error('Error deleting review:', error);
+    }
+}
+
+main();
